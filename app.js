@@ -1,5 +1,5 @@
 /* ============================================================================
-   app.js — Navigation, background, content population, and the Data Explorer.
+   app.js · Navigation, background, content population, and the Data Explorer.
    ========================================================================== */
 
 (function () {
@@ -286,7 +286,7 @@
     renderTable(filtered());
   }));
 
-  const cap = s => s ? s.charAt(0).toUpperCase() + s.slice(1) : "—";
+  const cap = s => s ? s.charAt(0).toUpperCase() + s.slice(1) : "n/a";
 
   /* -------------------------- Init --------------------------------------- */
   function init() {

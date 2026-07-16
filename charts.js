@@ -1,5 +1,5 @@
 /* ============================================================================
-   charts.js — Lightweight, dependency-free SVG charts with hover tooltips.
+   charts.js · Lightweight, dependency-free SVG charts with hover tooltips.
    Exposes window.CHARTS used by app.js. All charts redraw from filtered data.
    ========================================================================== */
 
