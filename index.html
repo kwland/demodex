@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Demodex · A microscopic look at the mites on our eyes</title>
+  <meta name="description" content="An interactive look at Demodex folliculorum and brevis — the microscopic mites living in our eyelashes — with a 3D model, real de-identified clinical data, and the science of Demodex blepharitis." />
+
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+
+  <!-- Fonts (with graceful system fallbacks in CSS) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="css/styles.css" />
+
+  <!-- Three.js as ES module (used by js/mite3d.js) -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.161.0/examples/jsm/"
+    }
+  }
+  </script>
+</head>
+<body data-sky="twilight">
+
+  <!-- ===================== BACKGROUND LAYERS ===================== -->
+  <div class="bg" aria-hidden="true">
+    <div class="bg__sky"></div>
+    <canvas class="bg__stars" id="starfield"></canvas>
+    <div class="bg__glow"></div>
+    <svg class="bg__mountains" viewBox="0 0 1440 320" preserveAspectRatio="none">
+      <path class="mtn mtn--far"  d="M0 260 L180 190 L340 245 L520 150 L700 235 L900 165 L1080 240 L1260 180 L1440 250 L1440 320 L0 320 Z"/>
+      <path class="mtn mtn--mid"  d="M0 300 L160 235 L360 290 L560 210 L780 285 L1000 225 L1200 295 L1440 240 L1440 320 L0 320 Z"/>
+      <path class="mtn mtn--near" d="M0 320 L220 285 L470 315 L720 275 L980 312 L1220 285 L1440 315 L1440 320 L0 320 Z"/>
+    </svg>
+  </div>
+
+  <!-- ===================== HEADER / NAV ===================== -->
+  <header class="site-header">
+    <a class="brand" href="#" data-tab="home">
+      <span class="brand__mark" aria-hidden="true">
+        <svg viewBox="0 0 40 40" width="26" height="26">
+          <ellipse cx="20" cy="20" rx="7" ry="15" fill="none" stroke="currentColor" stroke-width="2"/>
+          <line x1="13" y1="12" x2="6"  y2="8"  stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          <line x1="13" y1="17" x2="5"  y2="16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          <line x1="27" y1="12" x2="34" y2="8"  stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          <line x1="27" y1="17" x2="35" y2="16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+      </span>
+      <span class="brand__name">Demodex</span>
+    </a>
+
+    <nav class="nav" id="nav" aria-label="Primary">
+      <button class="nav__link is-active" data-tab="home">Home</button>
+      <button class="nav__link" data-tab="mite">The Mite</button>
+      <button class="nav__link" data-tab="research">Research</button>
+      <button class="nav__link" data-tab="data">Data Explorer</button>
+      <button class="nav__link" data-tab="health">Eye Health</button>
+      <button class="nav__link" data-tab="treatment">Treatment</button>
+      <button class="nav__link" data-tab="refs">References</button>
+    </nav>
+
+    <div class="header-actions">
+      <button class="sky-toggle" id="skyToggle" title="Toggle dawn / twilight" aria-label="Toggle background theme">
+        <span class="sky-toggle__icon">☾</span>
+      </button>
+      <button class="nav-burger" id="navBurger" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ===================== MAIN ===================== -->
+  <main id="main">
+
+    <!-- ---------- HOME ---------- -->
+    <section class="panel is-active" id="tab-home">
+      <div class="hero">
+        <div class="hero__copy reveal">
+          <p class="eyebrow">Demodex folliculorum &amp; brevis</p>
+          <h1 class="hero__title">The mites that live<br/>on your eyelashes.</h1>
+          <p class="hero__lede">
+            Microscopic, eight-legged, and almost universal. Explore the biology of
+            <em>Demodex</em> in 3D, dig into real de-identified clinical data, and see why
+            <strong>Demodex blepharitis</strong> is one of the most common eye conditions
+            you have probably never heard of.
+          </p>
+          <div class="hero__cta">
+            <button class="btn btn--primary" data-tab="mite">Meet the mite in 3D</button>
+            <button class="btn btn--ghost" data-tab="data">Explore the data</button>
+          </div>
+        </div>
+
+        <div class="hero__stage reveal">
+          <div class="stat-orbit">
+            <div class="stat-orbit__core">
+              <span class="stat-orbit__big" data-count="95" data-suffix="%">0%</span>
+              <span class="stat-orbit__cap">infested at a<br/>Bay&nbsp;Area clinic</span>
+            </div>
+            <div class="stat-orbit__chip stat-orbit__chip--1"><b>0.4 mm</b><span>body length</span></div>
+            <div class="stat-orbit__chip stat-orbit__chip--2"><b>8</b><span>legs</span></div>
+            <div class="stat-orbit__chip stat-orbit__chip--3"><b>~14</b><span>day lifespan</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="epi-row" id="epiRow"></div>
+
+      <p class="scroll-hint">Use the tabs above to explore ↑</p>
+    </section>
+
+    <!-- ---------- THE MITE (3D) ---------- -->
+    <section class="panel" id="tab-mite">
+      <div class="section-head reveal">
+        <p class="eyebrow">Anatomy · Interactive 3D</p>
+        <h2>Meet <em>Demodex</em></h2>
+        <p class="section-sub">Drag to rotate. Scroll to zoom. Toggle the controls to explore how this
+          arachnid is built — and how the two human species differ.</p>
+      </div>
+
+      <div class="mite-lab reveal">
+        <div class="mite-lab__viewport">
+          <div id="miteCanvas" class="mite-canvas"></div>
+          <div id="miteLabels" class="mite-labels"></div>
+          <div class="mite-loading" id="miteLoading"><span></span>Assembling mite…</div>
+          <div class="mag-badge"><span id="magVal">120</span>× magnification</div>
+        </div>
+
+        <aside class="mite-lab__panel">
+          <div class="species-switch" role="tablist" aria-label="Species">
+            <button class="species-btn is-active" data-species="folliculorum" role="tab">D. folliculorum</button>
+            <button class="species-btn" data-species="brevis" role="tab">D. brevis</button>
+          </div>
+
+          <div class="species-card" id="speciesCard"></div>
+
+          <div class="mite-controls">
+            <label class="switch">
+              <input type="checkbox" id="ctlSpin" checked />
+              <span>Auto-rotate</span>
+            </label>
+            <label class="switch">
+              <input type="checkbox" id="ctlLabels" checked />
+              <span>Anatomy labels</span>
+            </label>
+            <label class="switch">
+              <input type="checkbox" id="ctlWire" />
+              <span>Wireframe</span>
+            </label>
+          </div>
+
+          <div class="mag-slider">
+            <label for="ctlMag">Magnification</label>
+            <input type="range" id="ctlMag" min="40" max="400" value="120" />
+          </div>
+        </aside>
+      </div>
+
+      <div class="fact-strip">
+        <h3>Five things about a face mite</h3>
+        <ul class="facts" id="factList"></ul>
+      </div>
+
+      <div class="lifecycle reveal">
+        <h3>A two-week life, start to finish</h3>
+        <div class="lifecycle__track" id="lifecycle"></div>
+      </div>
+    </section>
+
+    <!-- ---------- RESEARCH ---------- -->
+    <section class="panel" id="tab-research">
+      <div class="section-head reveal">
+        <p class="eyebrow">The study</p>
+        <h2>Counting mites in Danville</h2>
+        <p class="section-sub">A community-based investigation into how mite load relates to eyelid signs,
+          symptoms, and who actually gets diagnosed.</p>
+      </div>
+
+      <div class="qa-grid reveal">
+        <article class="qa-card">
+          <h3>Research question</h3>
+          <p>What is the correlation between the quantity of <em>Demodex folliculorum</em> and
+            <em>D. brevis</em> and the symptoms or collarette levels seen in eyelashes — and which
+            demographic factors are associated with infestation?</p>
+        </article>
+        <article class="qa-card qa-card--accent">
+          <h3>Thesis</h3>
+          <p>Because Demodex is poorly understood in the community, infestation frequently goes
+            <strong>undiagnosed and untreated</strong> — pointing to a need for awareness, routine
+            screening, and accessible treatment to reduce avoidable ocular harm.</p>
+        </article>
+      </div>
+
+      <div class="method reveal">
+        <h3>How the data was gathered</h3>
+        <div class="method__steps">
+          <div class="method__step"><span class="method__num">1</span><p>De-identified records from a Bay Area (Pleasanton) ophthalmology clinic.</p></div>
+          <div class="method__step"><span class="method__num">2</span><p><strong>8 lashes</strong> examined per patient under magnification with lactophenol cotton-blue staining.</p></div>
+          <div class="method__step"><span class="method__num">3</span><p>Mites counted, then graded for <strong>collarette level</strong> and <strong>symptom level</strong>.</p></div>
+          <div class="method__step"><span class="method__num">4</span><p><strong>43 patients</strong>, ages 16–90, analysed in R for correlation.</p></div>
+        </div>
+      </div>
+
+      <div class="findings">
+        <h3 class="reveal">What the numbers said</h3>
+        <div class="finding reveal">
+          <div class="finding__num"><span data-count="8.8" data-decimals="1">0</span></div>
+          <div class="finding__text"><h4>Average mites per patient</h4>
+            <p>Across 8 lashes, counts ranged from 0 to 31 (median 8). Even "clean-looking" lids carried mites.</p></div>
+        </div>
+        <div class="finding reveal">
+          <div class="finding__num finding__num--up">↗</div>
+          <div class="finding__text"><h4>More collarettes → more mites</h4>
+            <p>Average mite count climbed steadily from <b>none → mild → moderate → severe</b> collarettes,
+              confirming collarettes as a visible marker of infestation.</p></div>
+        </div>
+        <div class="finding reveal finding--twist">
+          <div class="finding__num">!</div>
+          <div class="finding__text"><h4>The surprise: symptoms mislead</h4>
+            <p>Patients reporting <b>no symptoms</b> had the <b>highest</b> average mite counts —
+              well above those with severe symptoms. Comfort is a poor guide to what is actually living
+              on the lash. This is exactly why the infestation slips past both patients and doctors.</p></div>
+        </div>
+        <p class="findings__cta reveal">See it for yourself in the <button class="linkish" data-tab="data">Data Explorer →</button></p>
+      </div>
+    </section>
+
+    <!-- ---------- DATA EXPLORER ---------- -->
+    <section class="panel" id="tab-data">
+      <div class="section-head reveal">
+        <p class="eyebrow">Interactive · 43 de-identified patients</p>
+        <h2>Data Explorer</h2>
+        <p class="section-sub">Filter the cohort and watch every chart, statistic, and table row update live.
+          Hover any bar or point for detail.</p>
+      </div>
+
+      <div class="filters" id="filters">
+        <div class="filter">
+          <label>Sex</label>
+          <div class="seg" data-filter="sex">
+            <button class="is-active" data-val="all">All</button>
+            <button data-val="F">Female</button>
+            <button data-val="M">Male</button>
+          </div>
+        </div>
+        <div class="filter">
+          <label>Symptomatic</label>
+          <div class="seg" data-filter="symptomatic">
+            <button class="is-active" data-val="all">All</button>
+            <button data-val="yes">Yes</button>
+            <button data-val="no">No</button>
+          </div>
+        </div>
+        <div class="filter">
+          <label>Collarette level</label>
+          <div class="seg" data-filter="collarette">
+            <button class="is-active" data-val="all">All</button>
+            <button data-val="none">None</button>
+            <button data-val="mild">Mild</button>
+            <button data-val="moderate">Mod.</button>
+            <button data-val="severe">Sev.</button>
+          </div>
+        </div>
+        <button class="filter-reset" id="filterReset">Reset</button>
+      </div>
+
+      <div class="stat-cards" id="statCards"></div>
+
+      <div class="chart-grid">
+        <figure class="chart-card reveal">
+          <figcaption>Average mites by <b>collarette level</b></figcaption>
+          <div class="chart" id="chartCollarette"></div>
+        </figure>
+        <figure class="chart-card reveal">
+          <figcaption>Average mites by <b>symptom level</b> <span class="tag-twist">note the twist</span></figcaption>
+          <div class="chart" id="chartSymptom"></div>
+        </figure>
+        <figure class="chart-card chart-card--wide reveal">
+          <figcaption>Age vs. mite count <span class="chart-legend" id="scatterLegend"></span></figcaption>
+          <div class="chart" id="chartScatter"></div>
+        </figure>
+        <figure class="chart-card reveal">
+          <figcaption>Distribution of mite counts</figcaption>
+          <div class="chart" id="chartHist"></div>
+        </figure>
+        <figure class="chart-card reveal">
+          <figcaption>Reported symptom types</figcaption>
+          <div class="chart" id="chartTypes"></div>
+        </figure>
+      </div>
+
+      <div class="table-wrap reveal">
+        <div class="table-head">
+          <h3>The cohort</h3>
+          <span class="table-count" id="tableCount"></span>
+        </div>
+        <div class="table-scroll">
+          <table class="data-table" id="dataTable">
+            <thead>
+              <tr>
+                <th data-sort="id">ID</th>
+                <th data-sort="age">Age</th>
+                <th data-sort="sex">Sex</th>
+                <th data-sort="collarette">Collarette</th>
+                <th data-sort="demodex" class="is-sorted">Mites ▾</th>
+                <th data-sort="symptom">Symptoms</th>
+              </tr>
+            </thead>
+            <tbody id="dataTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- EYE HEALTH ---------- -->
+    <section class="panel" id="tab-health">
+      <div class="section-head reveal">
+        <p class="eyebrow">Why it matters</p>
+        <h2>From mite to malady</h2>
+        <p class="section-sub">In small numbers Demodex is harmless. In high densities along the lid margin,
+          it drives a cascade of ocular surface disease.</p>
+      </div>
+
+      <div class="collarette-explain reveal">
+        <div class="collarette-explain__art">
+          <svg viewBox="0 0 220 220" width="180" height="180" aria-hidden="true">
+            <defs><radialGradient id="lidg" cx="50%" cy="40%" r="70%">
+              <stop offset="0%" stop-color="#ffd9c2"/><stop offset="100%" stop-color="#e79a86"/>
+            </radialGradient></defs>
+            <path d="M20 130 Q110 70 200 130 Q110 165 20 130 Z" fill="url(#lidg)" opacity="0.9"/>
+            <g stroke="#3a2b4d" stroke-width="3" stroke-linecap="round">
+              <line x1="60" y1="118" x2="52" y2="70"/><line x1="90" y1="106" x2="86" y2="52"/>
+              <line x1="120" y1="104" x2="124" y2="50"/><line x1="150" y1="116" x2="160" y2="66"/>
+            </g>
+            <g fill="#fff8ec" stroke="#d8b78a" stroke-width="1">
+              <ellipse cx="59" cy="116" rx="6" ry="4"/><ellipse cx="89" cy="104" rx="6" ry="4"/>
+              <ellipse cx="121" cy="102" rx="6" ry="4"/><ellipse cx="151" cy="114" rx="6" ry="4"/>
+            </g>
+          </svg>
+        </div>
+        <div class="collarette-explain__text">
+          <h3>The tell-tale sign: collarettes</h3>
+          <p>A <strong>collarette</strong> is a translucent, waxy cuff wrapped around the base of a lash —
+            a mix of mite waste and skin debris. It is the <em>pathognomonic</em> sign of Demodex
+            blepharitis: if you see collarettes, mites are almost certainly there. Yet most exams never
+            look this closely, which is a core reason the condition is under-diagnosed.</p>
+        </div>
+      </div>
+
+      <h3 class="reveal subhead">Conditions linked to Demodex</h3>
+      <div class="cond-grid" id="condGrid"></div>
+
+      <div class="risk reveal">
+        <h3>Who is more at risk?</h3>
+        <div class="risk__chips" id="riskChips"></div>
+      </div>
+    </section>
+
+    <!-- ---------- TREATMENT ---------- -->
+    <section class="panel" id="tab-treatment">
+      <div class="section-head reveal">
+        <p class="eyebrow">What can be done</p>
+        <h2>Treatment &amp; the access gap</h2>
+        <p class="section-sub">Effective options exist across the price spectrum. The harder problem is
+          getting people screened and treated in the first place.</p>
+      </div>
+
+      <div class="treat-grid" id="treatGrid"></div>
+
+      <div class="cta-band reveal">
+        <h3>The real bottleneck isn't the mite — it's the system</h3>
+        <p>Demodex blepharitis is widespread, cheap to screen for, and treatable. Its persistence is driven
+          by gaps in <strong>awareness, routine screening, and equitable access</strong> to care —
+          gaps that fall hardest on older and lower-income patients. Two practical fixes: build lash
+          screening into every eye exam, and expand community education.</p>
+      </div>
+    </section>
+
+    <!-- ---------- REFERENCES ---------- -->
+    <section class="panel" id="tab-refs">
+      <div class="section-head reveal">
+        <p class="eyebrow">Sources</p>
+        <h2>References</h2>
+        <p class="section-sub">Peer-reviewed literature and the original community dataset behind this project.</p>
+      </div>
+      <ol class="refs" id="refList"></ol>
+
+      <div class="credits reveal">
+        <p><strong>About this project.</strong> Built from a student research project on <em>Demodex
+          folliculorum</em> and <em>brevis</em> (Project Unity, Bay Area). All patient data shown here is
+          de-identified — medical record numbers were removed and patients are labelled P01–P43.
+          This site is for education and is not medical advice.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <span>Demodex · an interactive science project</span>
+    <span class="site-footer__dot">•</span>
+    <span>De-identified data · Educational use only</span>
+  </footer>
+
+  <!-- Floating tooltip for charts -->
+  <div class="tooltip" id="tooltip" role="status" aria-live="polite"></div>
+
+  <!-- Scripts: data → charts → app (classic), then 3D module -->
+  <script src="js/data.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/app.js"></script>
+  <script type="module" src="js/mite3d.js"></script>
+</body>
+</html>
